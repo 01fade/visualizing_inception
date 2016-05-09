@@ -1,4 +1,4 @@
-# Inception frames
+# Visualizing Inception
 
 ##Data sources
 
