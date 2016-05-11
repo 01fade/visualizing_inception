@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #02030D;
+        font-family: "Helvetica", sans-serif;
+        text-transform: uppercase;
+        font-weight: 500;
+        font-size: 40px;
+    }
+
+    #wallpaper {
+        position: absolute;
+        width: 100vw;
+        overflow: hidden;
+    }
+
+    #wallpaper img {
+        width: 100%;
+        opacity: 0.25;
+    }
+
+    #proj {
+        position: fixed;
+        font-size: 0.5em;
+        top: 0;
+        right: 0;
+        padding: 20px;
+        color: #FFFFFF;
+        z-index: 100000000000;
+    }
+
+    .element:hover .title,
+    .element:hover .bgimg {
+        display: block;
+        opacity: 1;
+    }
+
+    .element:hover {
+        height: 200px;
+        z-index: 100000;
+    }
+
+    .element .title {
+        color: #FFF;
+        position: absolute;
+        height: 100px;
+        width: 600px;
+        left: -660px;
+        padding: 0 30px;
+        background-color: inherit;
+        /*border-bottom: 1px dashed #ccc;*/
+        line-height: 1rem;
+        text-align: right;
+        display: none;
+        opacity: 0;
+        -webkit-transition: all 2s;
+        transition: all 2s;
+    }
+
+    .element span {
+        text-transform: none;
+    }
+
+    .bgimg {
+        display: none;
+        opacity: 0;
+        -webkit-transition: all 2s;
+        transition: all 2s;
+    }
+
+    .bgimg img {
+        width: 50%;
+    }
+
+    canvas {
+        z-index: 0;
+    }
+
+    button {
+        padding: 10px 20px;
+        background-color: transparent;
+        color: #FFFFFF;
+        border: 1px solid #FFFFFF;
+        cursor: pointer;
+    }
+
+    .selected {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    #threedtitle {
+        color: #FFFFFF;
+        font-weight: bold;
+        font-size: 6rem;
+        padding: 0 0 20rem 0;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="proj">
+        <button id="reset" class="selected">Vertical View</button>
+        <button id="bird" class="">Bird View</button>
+        <button id="stairs" class="">Stairs View</button>
+    </div>
+    <div id="wallpaper"><img src="wallpaper.png" alt=""></div>
+    <div id="container"></div>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="three.min.js"></script>
+    <script src="TrackballControls.js"></script>
+    <script src="CSS3DRenderer.js"></script>
+    <script src="date.js"></script>
+    <script>
+    var camera, bgscene, bgrend, cssscene, cssrend, controls;
+    var col;
+    var scrollspeed = 100;
+    var view = 0;
+    var globaly = 0;
+
+    function init() {
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+
+        camera.position.x = -1500;
+        camera.position.y = 0;
+        camera.position.z = 2000;
+
+        camera.rotation.x = 0;
+        camera.rotation.y = 0;
+        camera.rotation.z = 0;
+
+        controls = new THREE.TrackballControls(camera);
+        bgscene = new THREE.Scene();
+        cssscene = new THREE.Scene();
+
+        //
+
+        // var timeind = document.createElement('div');
+        // timeind.id = "timeind";
+
+        var title = document.createElement('div');
+        title.id = "threedtitle";
+        title.innerHTML = "VISUALIZING INCEPTION";
+
+        var titleobj = new THREE.CSS3DObject(title);
+        titleobj.position.y = 100;
+
+        cssscene.add(titleobj);
+
+
+        for (var i = 0; i < 850; i++) {
+            var element = document.createElement('div');
+            element.className = 'element';
+            // var h = Math.round((col[i].id+1) * 10 / 60 / 60 );
+            // var m = Math.round((col[i].id+1) * 10 / 60 );
+            // var s = Math.round((col[i].id+1) * 10 );
+            var time = (new Date).clearTime().addSeconds((col[i].id + 1) * 10).toString('H:mm:ss');
+            element.innerHTML = '<div class="title"><p>' + col[i].level + ' <span>@' + time + '</span></p></div><div class="bgimg"><img src="../small960/' + (i + 1) + '.jpg"></div>';
+            element.id = i + 1;
+            element.style.width = '1500px';
+            element.style.height = '100px';
+            element.style.background = new THREE.Color("rgb(" + col[i].color + ")").getStyle();
+
+            var object = new THREE.CSS3DObject(element);
+            // object.scale.x = Math.random() + 0.5;
+            // object.scale.y = Math.random() + 0.5;
+
+            object.position.y = -100 * i;
+            var factor = 2;
+            if (col[i].level == "Cobb") {
+                object.position.z = 400 * factor;
+            } else if (col[i].level == "Dream Level 1") {
+                object.position.z = -200 * factor;
+            } else if (col[i].level == "Dream Level 2") {
+                object.position.z = -400 * factor;
+            } else if (col[i].level == "Dream Level 3") {
+                object.position.z = -600 * factor;
+            } else if (col[i].level == "Limbo") {
+                object.position.z = -800 * factor;
+            } else {
+                object.position.z = 0;
+            }
+            // object.rotation.x = 0.4;
+            // object.rotation.y = 1;
+
+            cssscene.add(object);
+
+        }
+
+        // $("div").click(function() {
+        //     console.log($(this));
+        // })
+
+        bgrend = new THREE.WebGLRenderer({
+            alpha: true
+        });
+        bgrend.setClearColor(0x000000, 0);
+        bgrend.setPixelRatio(window.devicePixelRatio);
+        bgrend.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById("container").appendChild(bgrend.domElement);
+
+        cssrend = new THREE.CSS3DRenderer();
+        cssrend.setSize(window.innerWidth, window.innerHeight);
+        cssrend.domElement.style.position = 'absolute';
+        cssrend.domElement.style.top = 0;
+        document.getElementById("container").appendChild(cssrend.domElement);
+    }
+
+
+    $(window).bind('mousewheel', function(e) {
+        // console.log(camera.position.y);
+        // disabled in TrackballControls.js
+        if (e.originalEvent.wheelDelta > 0) {
+            controls.target.y += scrollspeed;
+            camera.position.y += scrollspeed;
+            if (camera.position.y > 0) {
+                camera.position.y = 0;
+            }
+            globaly = camera.position.y;
+        } else {
+            controls.target.y -= scrollspeed;
+            camera.position.y -= scrollspeed;
+            if (camera.position.y < -84500) {
+                camera.position.y = -84500;
+            }
+            globaly = camera.position.y;
+        }
+    });
+
+    $("#stairs").click(function() {
+        $("button").removeClass("selected");
+        $("#stairs").addClass("selected");
+        view = 2;
+        controls.reset();
+        controls.target.y = globaly;
+        camera.position.y = globaly;
+        camera.position.x = -400;
+        camera.rotation.x = 0.8;
+        camera.rotation.y = 0;
+        // camera.rotation.y = -0.5;
+        scrollspeed = 200;
+        $(".element").css("width", "4000px");
+        $("#wallpaper").css("opacity", 0.1);
+    });
+
+    $("#bird").click(function() {
+        $("button").removeClass("selected");
+        $("#bird").addClass("selected");
+        view = 1;
+        controls.reset();
+        controls.target.y = globaly;
+        camera.position.y = globaly;
+
+        camera.position.x = -12000;
+        camera.position.z = 20000;
+
+        camera.rotation.x = 0.5;
+        camera.rotation.y = -0.5;
+        camera.rotation.z = -1;
+        scrollspeed = 400;
+        $(".element").css("width", "4000px");
+        $("#wallpaper").css("opacity", 0.1);
+    });
+
+    $("#reset").click(function() {
+        $("button").removeClass("selected");
+        $("#reset").addClass("selected");
+        view = 0;
+        controls.reset();
+        controls.target.y = globaly;
+        camera.position.y = globaly;
+        $(".element").css("width", "1500px");
+        $("#wallpaper").css("opacity", 0.2);
+    })
+
+
+    function animate() {
+        requestAnimationFrame(animate);
+        // controls.update();
+
+        bgrend.render(bgscene, camera);
+        cssrend.render(cssscene, camera);
+    }
+
+    $.getJSON("3dinception.json", function(data) {
+        col = data.seq;
+        init();
+        animate();
+    });
+    </script>
+</body>
+
+</html>

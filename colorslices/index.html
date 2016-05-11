@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Inception Colors</title>
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #000;
+    }
+
+    .slice {
+        height: 100vh;
+        float: left;
+    }
+
+    #loading {
+        position: relative;
+        height: 100vh;
+        background-color: #000;
+        z-index: 1000;
+    }
+
+    #loading img {
+        width: 600px;
+        height: 255px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+    }
+
+    #imgholder {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 20vw;
+        z-index: 10000;
+    }
+
+    #imgholder img {
+        width: 100%;
+    }
+
+    #currentCol {
+        height: 20px;
+        width: 100vw;
+        position: absolute;
+        bottom: 0;
+        z-index: 2000;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper"></div>
+    <div id="imgholder"></div>
+    <div id="currentCol"></div>
+    <div id="img2load"></div>
+    <div id="loading"><img src="../inception.gif" alt=""></div>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://npmcdn.com/imagesloaded@4.1/imagesloaded.pkgd.min.js"></script>
+    <script>
+    var col;
+
+    function init() {
+        function reslice() {
+            $(".slice").css("width", window.innerWidth / 850 + "px");
+        }
+        reslice();
+        $(window).on("resize", reslice);
+
+        $("#loading img").click(function() {
+            $("#loading").fadeOut();
+        })
+
+        $(".slice").mouseenter(function() {
+            var idd = $(this)[0].id;
+            var src = "../small960/" + idd + ".jpg";
+            $("#imgholder").html('<img src="' + src + '">');
+            $("#currentCol").css("background-color", 'rgb(' + col[idd - 1] + ')');
+        })
+    }
+
+    $.getJSON("colors.json", function(data) {
+        col = data;
+        for (var i = 1; i < 851; i++) {
+            $("#wrapper").append('<div class="slice" id="' + i + '"></div>');
+            $("#" + i).css("background-color", 'rgb(' + col[i] + ')');
+            $("#img2load").append('<div class="thumb" id=thumb"' + i + '"></div>');
+            if (i == 851 - 1) {
+                $('#img2load').imagesLoaded(function() {
+                    $("#loading").fadeOut();
+                    init();
+                });
+            }
+        }
+    });
+    </script>
+</body>
+
+</html>
