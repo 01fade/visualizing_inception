@@ -30,6 +30,7 @@ Dream Level 2:
 Dream Level 3:
 - 389 shots, 15.54 min
 
+Note that the way data is prepared right now, the time and the level don't seem to quite match sometimes - need to look into that.
 
 ###Movie frames
 
@@ -57,3 +58,9 @@ see "batch.sh", how I converted all frames into a smaller size to display online
 ###Average colors
 [Color Thief](https://github.com/fengsp/color-thief-py)
 For 889 images this took about an hour. I applied to functions on the full size 1920x800px frames that I extracted before.
+
+##Data Visualization
+###Color Slices
+Just plain Javascript with the color data from python.
+###3D Visualization
+Going off the concept of layers in this movie, I visualized the different layers in Three.js. It uses specifically CSS3D.
