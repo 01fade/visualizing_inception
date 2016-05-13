@@ -4,11 +4,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Visualizing Inception</title>
     <style>
     body {
         margin: 0;
         overflow: hidden;
-        background-color: #02030D;
+        /*background-color: #02030D;*/
+        background-color: #FFFFFF;
         font-family: "Helvetica", sans-serif;
         text-transform: uppercase;
         font-weight: 500;
@@ -16,14 +18,15 @@
     }
 
     #wallpaper {
+        background-image: url("wallpaper.png");
+        background-size: cover;
+        background-position: center center;
         position: absolute;
-        width: 100vw;
+        width: 105vw;
+        height: 100vh;
+        position: absolute;
         overflow: hidden;
-    }
-
-    #wallpaper img {
-        width: 100%;
-        opacity: 0.25;
+        opacity: 0.15;
     }
 
     #proj {
@@ -33,6 +36,18 @@
         right: 0;
         padding: 20px;
         color: #FFFFFF;
+        z-index: 100000000000;
+    }
+
+    #title {
+        position: fixed;
+        font-size: 0.5em;
+        top: 0;
+        left: 0;
+        padding: 20px;
+        display: none;
+        font-weight: bold;
+        color: #0B104E;
         z-index: 100000000000;
     }
 
@@ -85,32 +100,35 @@
 
     button {
         padding: 10px 20px;
-        background-color: transparent;
+        background-color: rgba(0, 0, 0, 0.2);
         color: #FFFFFF;
         border: 1px solid #FFFFFF;
         cursor: pointer;
     }
 
     .selected {
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: rgba(0, 0, 0, 0.4);
     }
 
-    #threedtitle {
-        color: #FFFFFF;
+    #threedtitle,
+    #threedend {
+        color: #0B104E;
         font-weight: bold;
-        font-size: 6rem;
-        padding: 0 0 20rem 0;
+        font-size: 10rem;
+        text-align: center;
+        padding: 0 0 30rem 0;
     }
     </style>
 </head>
 
 <body>
+    <div id="title">Visualizing Inception</div>
     <div id="proj">
         <button id="reset" class="selected">Vertical View</button>
         <button id="bird" class="">Bird View</button>
         <button id="stairs" class="">Stairs View</button>
     </div>
-    <div id="wallpaper"><img src="wallpaper.png" alt=""></div>
+    <div id="wallpaper"></div>
     <div id="container"></div>
     <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="three.min.js"></script>
@@ -152,6 +170,15 @@
         titleobj.position.y = 100;
 
         cssscene.add(titleobj);
+
+        var end = document.createElement('div');
+        end.id = "threedend";
+        end.innerHTML = "Was it all a dream?";
+
+        var endobj = new THREE.CSS3DObject(end);
+        endobj.position.y = -86000;
+
+        cssscene.add(endobj);
 
 
         for (var i = 0; i < 850; i++) {
@@ -210,6 +237,9 @@
         cssrend.domElement.style.position = 'absolute';
         cssrend.domElement.style.top = 0;
         document.getElementById("container").appendChild(cssrend.domElement);
+
+        cssrend.setSize(window.innerWidth * 1, window.innerHeight * 1);
+        bgrend.setSize(window.innerWidth * 1, window.innerHeight * 1);
     }
 
 
@@ -226,10 +256,16 @@
         } else {
             controls.target.y -= scrollspeed;
             camera.position.y -= scrollspeed;
-            if (camera.position.y < -84500) {
-                camera.position.y = -84500;
+            if (camera.position.y < -89000) {
+                camera.position.y = -89000;
             }
             globaly = camera.position.y;
+        }
+
+        if (camera.position.y > -800) {
+            $("#title").fadeOut();
+        } else {
+            $("#title").fadeIn();
         }
     });
 
@@ -239,14 +275,13 @@
         view = 2;
         controls.reset();
         controls.target.y = globaly;
-        camera.position.y = globaly;
+        camera.position.y = globaly - 2000;
         camera.position.x = -400;
         camera.rotation.x = 0.8;
         camera.rotation.y = 0;
         // camera.rotation.y = -0.5;
         scrollspeed = 200;
         $(".element").css("width", "4000px");
-        $("#wallpaper").css("opacity", 0.1);
     });
 
     $("#bird").click(function() {
@@ -255,7 +290,7 @@
         view = 1;
         controls.reset();
         controls.target.y = globaly;
-        camera.position.y = globaly;
+        camera.position.y = globaly - 10000;
 
         camera.position.x = -12000;
         camera.position.z = 20000;
@@ -265,7 +300,6 @@
         camera.rotation.z = -1;
         scrollspeed = 400;
         $(".element").css("width", "4000px");
-        $("#wallpaper").css("opacity", 0.1);
     });
 
     $("#reset").click(function() {
@@ -276,7 +310,11 @@
         controls.target.y = globaly;
         camera.position.y = globaly;
         $(".element").css("width", "1500px");
-        $("#wallpaper").css("opacity", 0.2);
+    })
+
+    $(window).on("resize", function() {
+        cssrend.setSize(window.innerWidth * 1, window.innerHeight * 1);
+        bgrend.setSize(window.innerWidth * 1, window.innerHeight * 1);
     })
 
 

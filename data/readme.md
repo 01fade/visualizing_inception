@@ -57,3 +57,10 @@ see "batch.sh", how I converted all frames into a smaller size to display online
 ###Average colors
 [Color Thief](https://github.com/fengsp/color-thief-py)
 For 889 images this took about an hour. I applied to functions on the full size 1920x800px frames that I extracted before.
+
+##Data visualization
+###Color Slices
+
+
+##Wish list
+For the future I want to also display in what scenes/sections the words "reality"/"real" or "dream" appears from the dialog. The data is already 

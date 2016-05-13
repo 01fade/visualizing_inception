@@ -29,6 +29,8 @@ function countwords() {
             dreamseq.push([words[i].start, words[i].end]);
         }
     }
+    console.log("dream", dreamseq.length);
+    console.log("real", realseq.length);
     saveData();
 }
 
